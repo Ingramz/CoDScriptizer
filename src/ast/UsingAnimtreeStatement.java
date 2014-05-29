@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UsingAnimtreeStatement extends AstNode
 {
-    private String animTreeName;
+    public String animTreeName;
 
     public UsingAnimtreeStatement(String animTreeName) {
         this.animTreeName = animTreeName;

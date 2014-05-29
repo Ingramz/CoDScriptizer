@@ -3,12 +3,13 @@ package ast;
 import java.util.Arrays;
 import java.util.List;
 
-public class SwitchStatement extends Statement {
+public class SwitchStatement extends Statement
+{
+	public Expression condition;
+	public List<SwitchBranch> body;
 
-	private Expression condition;
-	private List<SwitchBranch> body;
-
-	public SwitchStatement(Expression condition, List<SwitchBranch> body) {
+	public SwitchStatement(Expression condition, List<SwitchBranch> body)
+    {
 		this.condition = condition;
 		this.body = body;
 	}

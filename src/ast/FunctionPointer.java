@@ -3,7 +3,6 @@ package ast;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class FunctionPointer extends Expression
 {
     public FileLocation location;

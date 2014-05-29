@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * If-lause
- */
-public class IfStatement extends Statement {
+public class IfStatement extends Statement
+{
     public List<IfStatementBranch> statements;
 
 	public IfStatement(List<IfStatementBranch> statements) {

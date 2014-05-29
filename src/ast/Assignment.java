@@ -3,14 +3,11 @@ package ast;
 import java.util.Arrays;
 import java.util.List;
 
-/** 
- * Omistamine
- */
 public class Assignment extends Statement {
 	
-	private Expression variable;
-    private String operator;
-	private Expression expression;
+	public Expression variable;
+    public String operator;
+	public Expression expression;
 
 	public Assignment(Expression variable, String operator, Expression expression) {
 		this.variable = variable;

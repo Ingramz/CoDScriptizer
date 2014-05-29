@@ -3,14 +3,11 @@ package ast;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * while-lause.
- */
 public class Vector extends Expression {
 
-    private Expression a;
-    private Expression b;
-    private Expression c;
+    public Expression a;
+    public Expression b;
+    public Expression c;
 
     public Vector(Expression a, Expression b, Expression c) {
         this.a = a;

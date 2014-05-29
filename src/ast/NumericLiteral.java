@@ -1,11 +1,7 @@
 package ast;
 
-
 import java.math.BigDecimal;
 
-/**
- * Murdarvu literaal
- */
 public class NumericLiteral extends Literal<BigDecimal> {
 
     public NumericLiteral(BigDecimal value) {

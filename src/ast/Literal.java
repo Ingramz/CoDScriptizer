@@ -3,11 +3,8 @@ package ast;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Erinevate literaaliklasside ülemklass.
- */
 public class Literal<T> extends Expression {
-    protected T value;
+    public T value;
 
     public Literal(T value) {
         this.value = value;

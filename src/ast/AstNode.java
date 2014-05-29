@@ -3,15 +3,8 @@ package ast;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * AKTK abstraktse süntaksipuu tippude ülemklass.
- */
-public abstract class AstNode {
-	
-	/**
-	 * Annab kõik selle tipu struktuurielemendid, ka need,
-	 * mis ei ole AstNode'id.
-	 */
+public abstract class AstNode
+{
 	public abstract List<Object> getChildren();
 
     private String getSimpleName() {

@@ -3,8 +3,8 @@ package ast;
 import java.util.Arrays;
 import java.util.List;
 
-public class StructMember extends Expression {
-
+public class StructMember extends Expression
+{
     public Expression parent;
     public String name;
 

@@ -13,7 +13,6 @@ public class SwitchBranch extends AstNode
         this.code = code;
     }
 
-
     @Override
     public List<Object> getChildren() {
         return Arrays.asList((Object)cases, code);

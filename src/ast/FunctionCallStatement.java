@@ -5,7 +5,7 @@ import java.util.List;
 
 public class FunctionCallStatement extends Statement
 {
-	private FunctionCall functioncall;
+	public FunctionCall functioncall;
 
 	public FunctionCallStatement(FunctionCall functioncall) {
 		this.functioncall = functioncall;

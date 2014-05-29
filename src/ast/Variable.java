@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Variable extends Expression {
 
-	private String name;
+	public String name;
 
 	public Variable(String name) {
 		this.name = name;

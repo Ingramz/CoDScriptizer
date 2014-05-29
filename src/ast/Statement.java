@@ -1,7 +1,3 @@
 package ast;
 
-/**
- * Erinevate lauseliikide ülemklass
- */
-public abstract class Statement extends AstNode {
-}
+public abstract class Statement extends AstNode {}
