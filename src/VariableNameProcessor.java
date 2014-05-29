@@ -7,27 +7,25 @@ public class VariableNameProcessor
     static void processProgram(Program an)
     {
         List<Object> nodes = an.getChildren();
-        for(int i=0;i<nodes.size();i++)
-        {
-            if(nodes.get(i) instanceof FunctionDefinition)
-            {
-                Map<String, RecordedVariable> vars = new HashMap<String, RecordedVariable>();
-                proc(nodes.get(i), vars, new Counter());
-                ValueComparator bvc =  new ValueComparator(vars);
-                TreeMap<String,RecordedVariable> sorted_map = new TreeMap<String,RecordedVariable>(bvc);
+        for (Object node : nodes) {
+            if (node instanceof FunctionDefinition) {
+                Map<String, RecordedVariable> vars = new HashMap<>();
+                proc(node, vars, new Counter());
+                ValueComparator bvc = new ValueComparator(vars);
+                TreeMap<String, RecordedVariable> sorted_map = new TreeMap<>(bvc);
                 sorted_map.putAll(vars);
                 //printMap(sorted_map);
 
-                Map<String, String> replaceMap = new HashMap<String, String>();
+                Map<String, String> replaceMap = new HashMap<>();
 
                 VariableNameGenerator vgn = new VariableNameGenerator();
 
-                for(Map.Entry<String,RecordedVariable> entry : sorted_map.entrySet()) {
+                for (Map.Entry<String, RecordedVariable> entry : sorted_map.entrySet()) {
                     String key = entry.getKey();
                     RecordedVariable value = entry.getValue();
                     replaceMap.put(key, vgn.getNext(value.first, value.last));
                 }
-                proc2(nodes.get(i), replaceMap);
+                proc2(node, replaceMap);
             }
         }
     }
@@ -46,22 +44,15 @@ public class VariableNameProcessor
         if(an instanceof Variable)
         {
             Variable v = (Variable)an;
-            if(v.getName().toLowerCase().equals("game") ||
-                    v.getName().toLowerCase().equals("level") ||
-                    v.getName().toLowerCase().equals("self"))
-            {
-
-            } else {
-                RecordedVariable rv = lrv.get(v.getName().toLowerCase());
-                if(rv == null)
-                {
-                    lrv.put(v.getName().toLowerCase(), new RecordedVariable(usageCounter.next()));
-                } else
-                {
-
-                    rv.updateLast(usageCounter.next());
-                }
-            }
+            if (!v.getName().toLowerCase().equals("game") &&
+                    !v.getName().toLowerCase().equals("level") &&
+                    !v.getName().toLowerCase().equals("self")) {
+                        RecordedVariable rv = lrv.get(v.getName().toLowerCase());
+                        if(rv == null)
+                            lrv.put(v.getName().toLowerCase(), new RecordedVariable(usageCounter.next()));
+                        else
+                            rv.updateLast(usageCounter.next());
+                    }
         }
         else if(an instanceof ForLoop)
         {
@@ -82,17 +73,11 @@ public class VariableNameProcessor
         else if(an instanceof AstNode)
         {
             List<Object> children = ((AstNode)an).getChildren();
-            for(int i=0;i<children.size();i++)
-            {
-                proc(children.get(i), lrv, usageCounter);
-            }
+            for (Object aChildren : children)
+                proc(aChildren, lrv, usageCounter);
         } else if(an instanceof Collection)
-        {
             for(Object o : (Collection)an)
-            {
                 proc(o, lrv, usageCounter);
-            }
-        }
     }
 
     static void proc2(Object an, Map<String, String> repl)
@@ -100,29 +85,20 @@ public class VariableNameProcessor
         if(an instanceof Variable)
         {
             Variable v = (Variable)an;
-            if(v.getName().toLowerCase().equals("game") ||
-                    v.getName().toLowerCase().equals("level") ||
-                    v.getName().toLowerCase().equals("self"))
-            {
-
-            } else {
-                v.setName(repl.get(v.getName().toLowerCase()));
-            }
+            if (!v.getName().toLowerCase().equals("game") &&
+                    !v.getName().toLowerCase().equals("level") &&
+                    !v.getName().toLowerCase().equals("self")) {
+                        v.setName(repl.get(v.getName().toLowerCase()));
+                    }
         }
         else if(an instanceof AstNode)
         {
             List<Object> children = ((AstNode)an).getChildren();
-            for(int i=0;i<children.size();i++)
-            {
-                proc2(children.get(i), repl);
-            }
+            for (Object aChildren : children)
+                proc2(aChildren, repl);
         } else if(an instanceof Collection)
-        {
             for(Object o : (Collection)an)
-            {
                 proc2(o, repl);
-            }
-        }
     }
 }
 
@@ -131,7 +107,7 @@ class RecordedVariable implements Comparable<RecordedVariable>
     int first = -1;
     int last = -1;
 
-    List<Integer> occurences = new ArrayList<Integer>();
+    List<Integer> occurences = new ArrayList<>();
 
     RecordedVariable(int first) {
         this.first = first;
@@ -191,10 +167,10 @@ class ValueComparator implements Comparator<String> {
 
 class VariableNameGenerator
 {
-    TreeMap<Integer, Integer> vals = new TreeMap<Integer, Integer>();
+    TreeMap<Integer, Integer> vals = new TreeMap<>();
     final String alpha = "abcdefghijklnmopqrstuvwxyz_";
 
-    String getNthColumnName(int n)
+    String getNthVariableName(int n)
     {
         String name = "";
         while (n > 0) {
@@ -208,25 +184,25 @@ class VariableNameGenerator
     String getNext(Integer pos, Integer expect)
     {
         Integer last = null;
-        for(Map.Entry<Integer, Integer> entry : vals.entrySet()) {
+        for(Map.Entry<Integer, Integer> entry : vals.entrySet())
+        {
             Integer key = entry.getKey();
             Integer value = entry.getValue();
 
             if(pos > value)
             {
                 vals.put(key, expect);
-                return getNthColumnName(key);
+                return getNthVariableName(key);
             }
             last = key;
         }
+
         if(last == null)
-        {
             last = 1;
-        } else {
+        else
             last++;
-        }
 
         vals.put(last, expect);
-        return getNthColumnName(last);
+        return getNthVariableName(last);
     }
 }

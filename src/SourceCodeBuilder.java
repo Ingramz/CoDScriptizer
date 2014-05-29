@@ -1,6 +1,5 @@
 import ast.*;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 public class SourceCodeBuilder
@@ -26,11 +25,9 @@ public class SourceCodeBuilder
             for(Variable s : fd.args)
             {
                 if(first)
-                {
                     first = false;
-                } else {
+                else
                     p = concat(p, ",");
-                }
                 p = concat(p, s.getName());
             }
             p = concat(p, ")");
@@ -50,17 +47,13 @@ public class SourceCodeBuilder
             for(int i=0;i<lisb.size();i++)
             {
                 if(i == 0)
-                {
                     p = concat(p, "if");
-                } else {
+                else
+                {
                     if(lisb.get(i).getCondition() == null)
-                    {
                         p = concat(p, "else");
-                    }
                     else
-                    {
                         p = concat(p, "else if");
-                    }
                 }
 
                 if(lisb.get(i).getCondition() != null)
@@ -178,8 +171,7 @@ public class SourceCodeBuilder
         } else if(an instanceof StringLiteral) {
             return ((StringLiteral) an).getValue();
         } else if(an instanceof FunctionCallStatement) {
-            String p = rebuild_helper(((FunctionCallStatement) an).getFunctionCall());
-            return p;
+            return rebuild_helper(((FunctionCallStatement) an).getFunctionCall());
         } else if(an instanceof ForLoop) {
             ForLoop fl = (ForLoop) an;
             String p = "";
@@ -198,8 +190,10 @@ public class SourceCodeBuilder
             return p;
         } else if(an instanceof NumericLiteral) {
             String p = ((NumericLiteral) an).getValue().toString();
+            // 10.0 -> 10
             if(p.endsWith(".0"))
                 p = p.substring(0, p.length()-2);
+            // 0.1 -> .1
             if(p.startsWith("0."))
                 return p.substring(1);
             return p;
@@ -338,12 +332,12 @@ public class SourceCodeBuilder
             for(AstNode a : ((DeveloperCommentProgram) an).elements)
                 p = concat(p, rebuild_helper(a));
             p = concat(p, "#/");
-            return ""; // Production
+            return p;
         } else if(an instanceof DeveloperComment) {
             String p = "/#";
             p = concat(p, rebuild_helper(((DeveloperComment) an).code));
             p = concat(p, "#/");
-            return ""; // Production
+            return p;
         } else if(an instanceof SemicolonStatement) {
             return concat(rebuild_helper(((SemicolonStatement) an).statement), ";");
         } else if(an instanceof Vector) {
@@ -357,22 +351,18 @@ public class SourceCodeBuilder
             p = concat(p, ")");
             p = concat(p, "{");
             List<SwitchBranch> sb = ss.getBody();
-            for(int i=0;i<sb.size();i++)
-            {
-                for(int j=0;j<sb.get(i).cases.size();j++)
-                {
-                    if(sb.get(i).cases.get(j) instanceof SwitchConstantCase)
-                    {
+            for (SwitchBranch aSb : sb) {
+                for (int j = 0; j < aSb.cases.size(); j++) {
+                    if (aSb.cases.get(j) instanceof SwitchConstantCase) {
                         p = concat(p, "case");
-                        p = concat(p, rebuild_helper(((SwitchConstantCase) sb.get(i).cases.get(j)).lit));
+                        p = concat(p, rebuild_helper(((SwitchConstantCase) aSb.cases.get(j)).lit));
                         p = concat(p, ":");
-                    } else if(sb.get(i).cases.get(j) instanceof SwitchDefaultCase)
-                    {
+                    } else if (aSb.cases.get(j) instanceof SwitchDefaultCase) {
                         p = concat(p, "default:");
                     }
-                    Block b = sb.get(i).code;
+                    Block b = aSb.code;
 
-                    for(Statement s : b.getStatements())
+                    for (Statement s : b.getStatements())
                         p = concat(p, rebuild_helper(s));
                 }
             }
@@ -388,6 +378,7 @@ public class SourceCodeBuilder
         }
     }
 
+    // Liidab kokku kaks koodijuppi. Püüab vältida tühiku kasutamist kahe jupi vahel
     private static String concat(String a, String b)
     {
         if(a.isEmpty() || b.isEmpty())
@@ -410,18 +401,14 @@ public class SourceCodeBuilder
         return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == '_';
     }
 
+    // Kontroll kas sulge on tarvis
     static boolean addParen(Expression astnode, String operator)
     {
         if(astnode instanceof FunctionCallViaStatic)
         {
             String operator2 = ((FunctionCallViaStatic) astnode).pointer.functionName;
-
             int prec1 = getPrec(operator), prec2 = getPrec(operator2);
-
-            if(prec2 == -1)
-                return false;
-
-            return prec1 < prec2;
+            return prec2 != -1 && prec1 < prec2;
         }
         return false;
     }
