@@ -30,7 +30,7 @@ developer_comment_func_def
     ;
 
 code_line
-    :   code_line_opt_end (Semi?)
+    :   code_line_opt_end Semi?
     |   code_line_req_end? Semi
     ;
 
@@ -155,7 +155,6 @@ returnable
     :   LeftParen returnable RightParen                                     # Grouping
     |   Not returnable                                                      # LogicalNegationExpression
     |   Tilde returnable                                                    # BitwiseNegationExpression
-    |   Minus returnable                                                    # UnaryMinusExpression
     |   returnable op=(Star|Div|Mod) returnable                             # MultiplicationSubtractionExpression
     |   returnable op=(Plus|Minus) returnable                               # AddSubtractExpression
     |   returnable op=(LeftShift|RightShift) returnable                     # BitwiseShiftExpression
@@ -170,7 +169,7 @@ returnable
     ;
 
 constant
-    :   NumericConstant             # NumericConstant
+    :   Minus? NumericConstant      # NumericConstant
     |   StringLiteral               # StringLiteral
     |   And StringLiteral           # LocalizedStringLiteral
     |   function_pointer            # FunctionPointer
@@ -266,7 +265,7 @@ RightShift : '>>';
 Plus : '+';
 PlusPlus : '++';
 Minus : '-';
-MinusMinus : '--';
+MinusMinus : Minus Minus;
 Star : '*';
 Div : '/';
 Mod : '%';

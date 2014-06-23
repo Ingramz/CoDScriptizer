@@ -505,14 +505,6 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     }
 
     @Override
-    public AstNode visitUnaryMinusExpression(@NotNull CoDScriptParser.UnaryMinusExpressionContext ctx) {
-        //System.out.println("visitUnaryMinusExpression");
-        List<Expression> args = new ArrayList<Expression>();
-        args.add((Expression) visit(ctx.returnable()));
-        return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "-"), args);
-    }
-
-    @Override
     public AstNode visitLogicalNegationExpression(@NotNull CoDScriptParser.LogicalNegationExpressionContext ctx) {
         //System.out.println("visitLogicalNegationExpression");
         List<Expression> args = new ArrayList<Expression>();
