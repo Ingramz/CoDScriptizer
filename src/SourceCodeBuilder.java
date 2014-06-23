@@ -71,6 +71,7 @@ public class SourceCodeBuilder
             switch(fcvs.pointer.functionName)
             {
                 case "+":
+                case "-":
                 case "*":
                 case "/":
                 case "%":
@@ -112,30 +113,6 @@ public class SourceCodeBuilder
                     p = concat(p, rebuild_helper(fcvs.arguments.get(0)));
                     if(paren)
                         p = concat(p, ")");
-                    break;
-                case "-":
-                    if(fcvs.arguments.size() == 1)
-                    {
-                        p = concat(p, fcvs.pointer.functionName);
-                        p = concat(p, rebuild_helper(fcvs.arguments.get(0)));
-                    }
-                    if(fcvs.arguments.size() == 2)
-                    {
-                        boolean parenL1 = addParen(fcvs.arguments.get(0), fcvs.pointer.functionName);
-                        boolean parenR1 = addParen(fcvs.arguments.get(1), fcvs.pointer.functionName);
-
-                        if(parenL1)
-                            p = concat(p, "(");
-                        p = concat(p, rebuild_helper(fcvs.arguments.get(0)));
-                        if(parenL1)
-                            p = concat(p, ")");
-                        p = concat(p, fcvs.pointer.functionName);
-                        if(parenR1)
-                            p = concat(p, "(");
-                        p = concat(p, rebuild_helper(fcvs.arguments.get(1)));
-                        if(parenR1)
-                            p = concat(p, ")");
-                    }
                     break;
                 default:
                     if(fcvs.called_on != null)
