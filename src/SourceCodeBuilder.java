@@ -216,6 +216,13 @@ public class SourceCodeBuilder
             p += ((IncludeStatement) an).path.path;
             p += ";";
             return p;
+        } else if(an instanceof UsingAnimtreeStatement) {
+            String p = "#using_animtree";
+            p += '(';
+            p += ((UsingAnimtreeStatement) an).animTreeName;
+            p += ')';
+            p += ';';
+            return p;
         } else if(an instanceof StructMember) {
             String p = "";
             p = concat(p, rebuild_helper(((StructMember) an).parent));

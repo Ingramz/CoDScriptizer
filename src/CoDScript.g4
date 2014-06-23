@@ -1,12 +1,16 @@
 grammar CoDScript;
 
 program
-    :   include_statement* (function_definition|developer_comment_func_def)*
+    :   include_statement* (function_definition|developer_comment_func_def|using_animtree_statement)*
     ;
 
 // #include path\to\file;
 include_statement
     :   Include file_path Semi
+    ;
+
+using_animtree_statement
+    :   UsingAnimtree LeftParen StringLiteral RightParen Semi
     ;
 
 // funcname(arg1, arg2, arg3, ...) { code }
@@ -302,6 +306,7 @@ Hash: '#';
 Backslash: '\\';
 
 Include: '#include';
+UsingAnimtree: '#using_animtree';
 DeveloperCommentOpen: '/#';
 DeveloperCommentClose: '#/';
 

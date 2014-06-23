@@ -217,6 +217,12 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     }
 
     @Override
+    public AstNode visitUsing_animtree_statement(@NotNull CoDScriptParser.Using_animtree_statementContext ctx) {
+        //System.out.println("visitUsing_animtree_statement");
+        return new UsingAnimtreeStatement(ctx.StringLiteral().getText());
+    }
+
+    @Override
     public AstNode visitDeveloper_comment(@NotNull CoDScriptParser.Developer_commentContext ctx)
     {
         //System.out.println("visitDeveloper_comment");
