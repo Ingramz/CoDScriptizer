@@ -9,6 +9,7 @@ include_statement
     :   Include file_path Semi
     ;
 
+// #using_animtree("animtree_name");
 using_animtree_statement
     :   UsingAnimtree LeftParen StringLiteral RightParen Semi
     ;
@@ -355,24 +356,26 @@ DecimalFloatingConstant
     :   DecimalConstant? '.' Digit+
     ;
 
-fragment
-EscapeSequence
-    :   '\\' ['"?abfnrtv\\]
+fragment EscapeSequence
+    : SingleEscapeCharacter
+    | NonEscapeCharacter
+    ;
+
+fragment SingleEscapeCharacter
+    : ["\\nrt]
+    ;
+
+fragment NonEscapeCharacter
+    : ~["\\nrt]
     ;
 
 StringLiteral
-    :   '"' SCharSequence? '"'
+    :   '"' StringCharacter* '"'
     ;
 
-fragment
-SCharSequence
-    :   SChar+
-    ;
-
-fragment
-SChar
-    :   ~["\\\r\n]
-    |   EscapeSequence
+fragment StringCharacter
+    : ~["\\\r\n]
+    | '\\' EscapeSequence
     ;
 
 Whitespace
