@@ -322,6 +322,10 @@ public class SourceCodeBuilder
             p = concat(p, rebuild_helper(((DeveloperComment) an).code));
             p = concat(p, "#/");
             return p;
+        } else if(an instanceof AnimtreeLiteral) {
+            return "#animtree";
+        } else if(an instanceof AnimationNameLiteral) {
+            return concat("%", ((AnimationNameLiteral) an).getValue());
         } else if(an instanceof SemicolonStatement) {
             return concat(rebuild_helper(((SemicolonStatement) an).statement), ";");
         } else if(an instanceof Vector) {

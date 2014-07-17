@@ -178,9 +178,11 @@ constant
     |   StringLiteral               # StringLiteral
     |   And StringLiteral           # LocalizedStringLiteral
     |   function_pointer            # FunctionPointer
+    |   Mod animName=Identifier     # AnimationConstant
     |   True                        # True
     |   False                       # False
     |   Undefined                   # Undefined
+    |   Animtree                    # Animtree
     |   LeftBracket RightBracket    # EmptyArray
     ;
 
@@ -308,6 +310,7 @@ Backslash: '\\';
 
 Include: '#include';
 UsingAnimtree: '#using_animtree';
+Animtree: '#animtree';
 DeveloperCommentOpen: '/#';
 DeveloperCommentClose: '#/';
 

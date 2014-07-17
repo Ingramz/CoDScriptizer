@@ -611,4 +611,14 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
         //System.out.println("visitDefaultCase");
         return new SwitchDefaultCase();
     }
+
+    @Override
+    public AstNode visitAnimtree(@NotNull CoDScriptParser.AnimtreeContext ctx) {
+        return new AnimtreeLiteral();
+    }
+
+    @Override
+    public AstNode visitAnimationConstant(@NotNull CoDScriptParser.AnimationConstantContext ctx) {
+        return new AnimationNameLiteral(ctx.animName.getText());
+    }
 }
