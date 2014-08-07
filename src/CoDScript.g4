@@ -155,7 +155,7 @@ returnable
     ;
 
 constant
-    :   Minus? NumericConstant      # NumericConstant
+    :   NumericConstant             # NumericConstant
     |   StringLiteral               # StringLiteral
     |   And StringLiteral           # LocalizedStringLiteral
     |   function_pointer            # FunctionPointer
@@ -321,10 +321,7 @@ Nondigit
 
 fragment Digit: '0'..'9';
 
-NumericConstant
-    :   DecimalConstant
-    |   DecimalFloatingConstant
-    ;
+NumericConstant: Minus? (DecimalConstant | DecimalFloatingConstant);
 
 fragment
 DecimalConstant
