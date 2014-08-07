@@ -319,10 +319,7 @@ Nondigit
     |   '_'
     ;
 
-fragment
-Digit
-    :   '0'..'9'
-    ;
+fragment Digit: '0'..'9';
 
 NumericConstant
     :   DecimalConstant
@@ -335,15 +332,8 @@ DecimalConstant
     |   Zero
     ;
 
-fragment
-NonzeroDigit
-    :   '1'..'9'
-    ;
-
-fragment
-Zero
-    :   '0'
-    ;
+fragment NonzeroDigit: '1'..'9';
+fragment Zero: '0';
 
 fragment
 DecimalFloatingConstant

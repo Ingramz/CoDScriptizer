@@ -251,7 +251,8 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitNumericConstant(@NotNull CoDScriptParser.NumericConstantContext ctx) {
         //System.out.println("visitNumericConstant");
-        return new NumericLiteral(new BigDecimal(ctx.NumericConstant().getText()));
+        String s = (ctx.Minus()==null?"":"-") + ctx.NumericConstant().getText();
+        return new NumericLiteral(new BigDecimal(s));
     }
 
     @Override
