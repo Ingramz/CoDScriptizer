@@ -45,7 +45,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitStaticFunctionCall(@NotNull CoDScriptParser.StaticFunctionCallContext ctx) {
         //System.out.println("visitStaticFunctionCall");
 
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         for(int i=0;i<ctx.returnable().size();i++)
             args.add((Expression)visit(ctx.returnable(i)));
 
@@ -62,7 +62,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitDynamicFunctionCall(@NotNull CoDScriptParser.DynamicFunctionCallContext ctx) {
         //System.out.println("visitDynamicFunctionCall");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         for(int i=0;i<ctx.returnable().size();i++)
             if(ctx.returnable(i) != ctx.expr)
                 args.add((Expression)visit(ctx.returnable(i)));
@@ -76,7 +76,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitIf_statement(@NotNull CoDScriptParser.If_statementContext ctx)
     {
         //System.out.println("visitIf_statement");
-        List<IfStatementBranch> statements = new ArrayList<IfStatementBranch>();
+        List<IfStatementBranch> statements = new ArrayList<>();
         statements.add((IfStatementBranch)visit(ctx.if_s()));
         for(int i=0;i<ctx.elseif_s().size();i++)
             statements.add((IfStatementBranch)visit(ctx.elseif_s(i)));
@@ -110,7 +110,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitCode_block(@NotNull CoDScriptParser.Code_blockContext ctx)
     {
         //System.out.println("visitCode_block");
-        List<Statement> statements = new ArrayList<Statement>();
+        List<Statement> statements = new ArrayList<>();
         for(int i=0;i<ctx.code_line().size();i++)
         {
             AstNode an = visit(ctx.code_line(i));
@@ -126,20 +126,20 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitIncrement_decrement(@NotNull CoDScriptParser.Increment_decrementContext ctx)
     {
         if(ctx.op.getType() == CoDScriptLexer.PlusPlus)
-            return new IncrementStatement((Expression)visit(ctx.variable()));
+            return new IncrementStatement((Expression)visit(ctx.lvalue()));
         else
-            return new DecrementStatement((Expression)visit(ctx.variable()));
+            return new DecrementStatement((Expression)visit(ctx.lvalue()));
     }
 
     @Override
     public AstNode visitNotify_statement(@NotNull CoDScriptParser.Notify_statementContext ctx) {
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         for(int i=0;i<ctx.returnable().size();i++)
             args.add((Expression)visit(ctx.returnable(i)));
 
         Expression called_on = null;
-        if(ctx.variable() != null)
-            called_on = (Expression)visit(ctx.variable());
+        if(ctx.rvalue() != null)
+            called_on = (Expression)visit(ctx.rvalue());
 
         return new NotifyStatement(called_on, args);
     }
@@ -151,27 +151,9 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     }
 
     @Override
-    public AstNode visitVar_base(@NotNull CoDScriptParser.Var_baseContext ctx)
-    {
-        //System.out.println("visitVar_base");
-        if(ctx.function_call_2() != null)
-            return visit(ctx.function_call_2());
-        else if(ctx.Identifier() != null)
-            return new Variable(ctx.Identifier().getText());
-        else if(ctx.Game() != null)
-            return new Variable("game");
-        else if(ctx.Level() != null)
-            return new Variable("level");
-        else if(ctx.Self() != null)
-            return new Variable("self");
-        else
-            return null;
-    }
-
-    @Override
     public AstNode visitSwitch_statement(@NotNull CoDScriptParser.Switch_statementContext ctx) {
         //System.out.println("visitSwitch_statement");
-        List<SwitchBranch> branches = new ArrayList<SwitchBranch>();
+        List<SwitchBranch> branches = new ArrayList<>();
         for(int i=0;i<ctx.case_block().size();i++)
             branches.add((SwitchBranch)visit(ctx.case_block(i)));
         return new SwitchStatement((Expression)visit(ctx.returnable()), branches);
@@ -186,13 +168,13 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitWaittill_statement(@NotNull CoDScriptParser.Waittill_statementContext ctx) {
         //System.out.println("visitWaittill_statement");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         for(int i=0;i<ctx.returnable().size();i++)
             args.add((Expression)visit(ctx.returnable(i)));
 
         Expression called_on = null;
-        if(ctx.variable() != null)
-            called_on = (Expression)visit(ctx.variable());
+        if(ctx.rvalue() != null)
+            called_on = (Expression)visit(ctx.rvalue());
 
         return new WaittillStatement(called_on, args);
     }
@@ -201,7 +183,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitFunction_definition(@NotNull CoDScriptParser.Function_definitionContext ctx)
     {
         //System.out.println("visitFunction_definition");
-        List<Variable> args = new ArrayList<Variable>();
+        List<Variable> args = new ArrayList<>();
 
         for(int i=0;i<ctx.Identifier().size();i++)
             if(ctx.Identifier(i).getSymbol() != ctx.name)
@@ -226,7 +208,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitDeveloper_comment(@NotNull CoDScriptParser.Developer_commentContext ctx)
     {
         //System.out.println("visitDeveloper_comment");
-        List<Statement> code = new ArrayList<Statement>();
+        List<Statement> code = new ArrayList<>();
 
         for(int i=0;i<ctx.code_line().size();i++)
             code.add((Statement)visit(ctx.code_line(i)));
@@ -286,11 +268,11 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitCase_block(@NotNull CoDScriptParser.Case_blockContext ctx)
     {
         //System.out.println("visitCase_block");
-        List<SwitchCase> sc = new ArrayList<SwitchCase>();
+        List<SwitchCase> sc = new ArrayList<>();
         for(int i=0;i<ctx.case_s().size();i++)
             sc.add((SwitchCase)visit(ctx.case_s(i)));
 
-        List<Statement> code = new ArrayList<Statement>();
+        List<Statement> code = new ArrayList<>();
 
         for(int i=0;i<ctx.code_line().size();i++)
             code.add((Statement)visit(ctx.code_line(i)));
@@ -303,8 +285,8 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
         Expression event = (Expression)visit(ctx.returnable());
 
         Expression called_on = null;
-        if(ctx.variable() != null)
-            called_on = (Expression)visit(ctx.variable());
+        if(ctx.rvalue() != null)
+            called_on = (Expression)visit(ctx.rvalue());
 
         return new EndonStatement(called_on, event);
     }
@@ -313,7 +295,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitLogicalAndExpression(@NotNull CoDScriptParser.LogicalAndExpressionContext ctx)
     {
         //System.out.println("visitLogicalAndExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression)visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "&&"), args);
@@ -323,7 +305,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     public AstNode visitDeveloper_comment_func_def(@NotNull CoDScriptParser.Developer_comment_func_defContext ctx)
     {
         //System.out.println("visitDeveloper_comment_func_def");
-        List<AstNode> nodes = new ArrayList<AstNode>();
+        List<AstNode> nodes = new ArrayList<>();
 
         for(int i=0;i<ctx.function_definition().size();++i)
             nodes.add(visit(ctx.function_definition(i)));
@@ -332,23 +314,9 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     }
 
     @Override
-    public AstNode visitFunction_call_on(@NotNull CoDScriptParser.Function_call_onContext ctx)
-    {
-        //System.out.println("visitFunction_call_on");
-        if(ctx.function_call_2() != null)
-        {
-            FunctionCall fc = (FunctionCall)visit(ctx.function_call_2());
-            fc.setCalledOn((Expression)visit(ctx.function_call_on()));
-            return fc;
-        } else {
-            return visit(ctx.variable());
-        }
-    }
-
-    @Override
     public AstNode visitLogicalOrExpression(@NotNull CoDScriptParser.LogicalOrExpressionContext ctx) {
         //System.out.println("visitLogicalOrExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression)visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "||"), args);
@@ -357,30 +325,18 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitAssignment(@NotNull CoDScriptParser.AssignmentContext ctx) {
         //System.out.println("visitAssignment");
-        return new Assignment((Expression)visit(ctx.variable()) ,ctx.op.getText(), (Expression)visit(ctx.returnable()));
+        return new Assignment((Expression)visit(ctx.lvalue()) ,ctx.op.getText(), (Expression)visit(ctx.returnable()));
     }
 
     @Override
     public AstNode visitProgram(@NotNull CoDScriptParser.ProgramContext ctx) {
         ////System.out.println("visitProgram");
-        List<AstNode> nodes = new ArrayList<AstNode>();
+        List<AstNode> nodes = new ArrayList<>();
 
         for(int i=0;i<ctx.getChildCount();++i)
             nodes.add(visit(ctx.getChild(i)));
 
         return new Program(nodes);
-    }
-
-    @Override
-    public AstNode visitDotAccess(@NotNull CoDScriptParser.DotAccessContext ctx) {
-        //System.out.println("visitDotAccess");
-        return new StructMember(ctx.Identifier().getText(), (Expression)visit(ctx.variable_ext()));
-    }
-
-    @Override
-    public AstNode visitArrayAccess(@NotNull CoDScriptParser.ArrayAccessContext ctx) {
-        //System.out.println("visitArrayAccess");
-        return new ArrayElement((Expression)visit(ctx.variable_ext()), (Expression)visit(ctx.returnable()));
     }
 
     @Override
@@ -408,20 +364,15 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     }
 
     @Override
-    public AstNode visitFunction_call(@NotNull CoDScriptParser.Function_callContext ctx) {
-        //System.out.println("visitFunction_call");
-        FunctionCall fc;
-        if(ctx.function_call_2() == null)
-            fc = (FunctionCall) visit(ctx.function_call_on());
-        else
-            fc = (FunctionCall) visit(ctx.function_call_2());
-        return fc;
-    }
-
-    @Override
     public AstNode visitFunction_call_statement(@NotNull CoDScriptParser.Function_call_statementContext ctx) {
         //System.out.println("visitFunction_call_statement");
-        return new FunctionCallStatement((FunctionCall)visit(ctx.function_call()));
+
+        FunctionCall fc = (FunctionCall) visit(ctx.function_call());
+
+        if(ctx.rvalue() != null)
+            fc.setCalledOn((Expression)visit(ctx.rvalue()));
+
+        return new FunctionCallStatement(fc);
     }
 
     @Override
@@ -433,7 +384,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitBitwiseXorExpression(@NotNull CoDScriptParser.BitwiseXorExpressionContext ctx) {
         //System.out.println("visitBitwiseXorExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "^"), args);
@@ -442,7 +393,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitBitwiseAndExpression(@NotNull CoDScriptParser.BitwiseAndExpressionContext ctx) {
         //System.out.println("visitBitwiseAndExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "&"), args);
@@ -457,7 +408,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitBitwiseNegationExpression(@NotNull CoDScriptParser.BitwiseNegationExpressionContext ctx) {
         //System.out.println("visitBitwiseNegationExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression) visit(ctx.returnable()));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "~"), args);
     }
@@ -477,7 +428,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitComparisonExpression(@NotNull CoDScriptParser.ComparisonExpressionContext ctx) {
         //System.out.println("visitComparisonExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, ctx.op.getText()), args);
@@ -486,7 +437,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitMultiplicationSubtractionExpression(@NotNull CoDScriptParser.MultiplicationSubtractionExpressionContext ctx) {
         //System.out.println("visitMultiplicationSubtractionExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, ctx.op.getText()), args);
@@ -495,7 +446,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitBitwiseOrExpression(@NotNull CoDScriptParser.BitwiseOrExpressionContext ctx) {
         //System.out.println("visitBitwiseOrExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "|"), args);
@@ -504,7 +455,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitAddSubtractExpression(@NotNull CoDScriptParser.AddSubtractExpressionContext ctx) {
         //System.out.println("visitAddSubtractExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, ctx.op.getText()), args);
@@ -513,7 +464,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitLogicalNegationExpression(@NotNull CoDScriptParser.LogicalNegationExpressionContext ctx) {
         //System.out.println("visitLogicalNegationExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression) visit(ctx.returnable()));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, "!"), args);
     }
@@ -539,7 +490,7 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitBitwiseShiftExpression(@NotNull CoDScriptParser.BitwiseShiftExpressionContext ctx) {
         //System.out.println("visitBitwiseShiftExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, ctx.op.getText()), args);
@@ -548,22 +499,10 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitEqualityExpression(@NotNull CoDScriptParser.EqualityExpressionContext ctx) {
         //System.out.println("visitEqualityExpression");
-        List<Expression> args = new ArrayList<Expression>();
+        List<Expression> args = new ArrayList<>();
         args.add((Expression)visit(ctx.returnable(0)));
         args.add((Expression) visit(ctx.returnable(1)));
         return new FunctionCallViaStatic(null, false, new FunctionPointer(null, ctx.op.getText()), args);
-    }
-
-    @Override
-    public AstNode visitVarBaseUnused(@NotNull CoDScriptParser.VarBaseUnusedContext ctx) {
-        //System.out.println("visitVarBaseUnused");
-        return super.visitVarBaseUnused(ctx);
-    }
-
-    @Override
-    public AstNode visitVariable(@NotNull CoDScriptParser.VariableContext ctx) {
-        //System.out.println("visitVariable");
-        return super.visitVariable(ctx);
     }
 
     @Override
@@ -620,5 +559,82 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
     @Override
     public AstNode visitAnimationConstant(@NotNull CoDScriptParser.AnimationConstantContext ctx) {
         return new AnimationNameLiteral(ctx.animName.getText());
+    }
+
+    @Override
+    public AstNode visitRvalue_funcall(@NotNull CoDScriptParser.Rvalue_funcallContext ctx) {
+        return visit(ctx.function_call());
+    }
+
+    @Override
+    public AstNode visitRvalue_Game(@NotNull CoDScriptParser.Rvalue_GameContext ctx) {
+        return new Variable("game");
+    }
+
+    @Override
+    public AstNode visitRvalue_Level(@NotNull CoDScriptParser.Rvalue_LevelContext ctx) {
+        return new Variable("level");
+    }
+
+    @Override
+    public AstNode visitRvalue_Identifier(@NotNull CoDScriptParser.Rvalue_IdentifierContext ctx) {
+        return new Variable(ctx.Identifier().getText());
+    }
+
+    @Override
+    public AstNode visitLvalue_ArrayAccess(@NotNull CoDScriptParser.Lvalue_ArrayAccessContext ctx) {
+        return new ArrayElement((Expression)visit(ctx.lvalue()), (Expression)visit(ctx.returnable()));
+    }
+
+    @Override
+    public AstNode visitRvalue_ArrayAccess(@NotNull CoDScriptParser.Rvalue_ArrayAccessContext ctx) {
+        return new ArrayElement((Expression)visit(ctx.rvalue()), (Expression)visit(ctx.returnable()));
+    }
+
+    @Override
+    public AstNode visitRvalue_Self(@NotNull CoDScriptParser.Rvalue_SelfContext ctx) {
+        return new Variable("self");
+    }
+
+    @Override
+    public AstNode visitRvalue_funcall_on(@NotNull CoDScriptParser.Rvalue_funcall_onContext ctx) {
+        FunctionCall fc = (FunctionCall) visit(ctx.function_call());
+        fc.setCalledOn((Expression)visit(ctx.rvalue()));
+        return fc;
+    }
+
+    @Override
+    public AstNode visitLvalue_GameArray(@NotNull CoDScriptParser.Lvalue_GameArrayContext ctx) {
+        return new ArrayElement(new Variable("game"), (Expression)visit(ctx.returnable()));
+    }
+
+    @Override
+    public AstNode visitLvalue_funcall_arrayaccess(@NotNull CoDScriptParser.Lvalue_funcall_arrayaccessContext ctx) {
+        FunctionCall fc = (FunctionCall) visit(ctx.function_call());
+
+        if(ctx.rvalue() != null)
+            fc.setCalledOn((Expression)visit(ctx.rvalue()));
+
+        return new ArrayElement(fc, (Expression)visit(ctx.returnable()));
+    }
+
+    @Override
+    public AstNode visitLvalue_Identifier(@NotNull CoDScriptParser.Lvalue_IdentifierContext ctx) {
+        return new Variable(ctx.Identifier().getText());
+    }
+
+    @Override
+    public AstNode visitRvalue_DotIdentifier(@NotNull CoDScriptParser.Rvalue_DotIdentifierContext ctx) {
+        return new StructMember(ctx.Identifier().getText(), (Expression)visit(ctx.rvalue()));
+    }
+
+    @Override
+    public AstNode visitLvalue_DotIdentifier(@NotNull CoDScriptParser.Lvalue_DotIdentifierContext ctx) {
+        return new StructMember(ctx.Identifier().getText(), (Expression)visit(ctx.rvalue()));
+    }
+
+    @Override
+    public AstNode visitRvalue_Parens(@NotNull CoDScriptParser.Rvalue_ParensContext ctx) {
+        return super.visit(ctx.rvalue());
     }
 }

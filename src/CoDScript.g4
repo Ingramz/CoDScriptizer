@@ -198,23 +198,23 @@ assignment
     ;
 
 lvalue
-    :   Identifier
-    |   rvalue Dot Identifier
-    |   lvalue LeftBracket returnable RightBracket
-    |   rvalue? function_call LeftBracket returnable RightBracket
-    |   Game LeftBracket returnable RightBracket
+    :   Identifier                                                  # lvalue_Identifier
+    |   rvalue Dot Identifier                                       # lvalue_DotIdentifier
+    |   lvalue LeftBracket returnable RightBracket                  # lvalue_ArrayAccess
+    |   rvalue? function_call LeftBracket returnable RightBracket   # lvalue_funcall_arrayaccess
+    |   Game LeftBracket returnable RightBracket                    # lvalue_GameArray
     ;
 
 rvalue
-    :   function_call
-    |   rvalue function_call
-    |   rvalue LeftBracket returnable RightBracket
-    |   LeftParen rvalue RightParen
-    |   rvalue Dot Identifier
-    |   Game
-    |   Level
-    |   Self
-    |   Identifier
+    :   function_call                                   # rvalue_funcall
+    |   rvalue function_call                            # rvalue_funcall_on
+    |   rvalue LeftBracket returnable RightBracket      # rvalue_ArrayAccess
+    |   LeftParen rvalue RightParen                     # rvalue_Parens
+    |   rvalue Dot Identifier                           # rvalue_DotIdentifier
+    |   Game                                            # rvalue_Game
+    |   Level                                           # rvalue_Level
+    |   Self                                            # rvalue_Self
+    |   Identifier                                      # rvalue_Identifier
     ;
 
 file_path
