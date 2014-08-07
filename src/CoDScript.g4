@@ -355,41 +355,17 @@ fragment EscapeSequence
     | NonEscapeCharacter
     ;
 
-fragment SingleEscapeCharacter
-    : ["\\nrt]
-    ;
+fragment SingleEscapeCharacter: ["\\nrt];
+fragment NonEscapeCharacter: ~["\\nrt];
 
-fragment NonEscapeCharacter
-    : ~["\\nrt]
-    ;
-
-StringLiteral
-    :   '"' StringCharacter* '"'
-    ;
+StringLiteral:   '"' StringCharacter* '"';
 
 fragment StringCharacter
     : ~["\\\r\n]
     | '\\' EscapeSequence
     ;
 
-Whitespace
-    :   [ \t]+
-        -> skip
-    ;
-
-Newline
-    :   (   '\r' '\n'?
-        |   '\n'
-        )
-        -> skip
-    ;
-
-BlockComment
-    :   '/*' .*? '*/'
-        -> skip
-    ;
-
-LineComment
-    :   '//' ~[\r\n]*
-        -> skip
-    ;
+Whitespace: [ \t]+ -> skip;
+Newline: ('\r' '\n'? | '\n') -> skip;
+BlockComment:   '/*' .*? '*/' -> skip;
+LineComment:   '//' ~[\r\n]* -> skip;
