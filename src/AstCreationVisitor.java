@@ -114,6 +114,8 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
         for(int i=0;i<ctx.code_line().size();i++)
         {
             AstNode an = visit(ctx.code_line(i));
+            if(an == null)
+                continue;
             Statement s = (Statement) an;
             //Statement s = (Statement)visit(ctx.code_line(i));
             statements.add(s);
@@ -345,8 +347,10 @@ public class AstCreationVisitor extends CoDScriptBaseVisitor<AstNode>
         AstNode an;
         if(ctx.code_line_req_end() != null)
             an = new SemicolonStatement((Statement)visit(ctx.code_line_req_end()));
-        else
+        else if(ctx.code_line_opt_end() != null)
             an = visit(ctx.code_line_opt_end());
+        else
+            return null;
 
         if(an == null)
         {
