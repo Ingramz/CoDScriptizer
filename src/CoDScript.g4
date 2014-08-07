@@ -40,7 +40,7 @@ code_line
     ;
 
 function_call_statement
-    :   function_call
+    :   rvalue? function_call
     ;
 
 wait_statement
@@ -83,15 +83,15 @@ code_line_req_end
     ;
 
 notify_statement
-    :   variable Notify LeftParen returnable (Comma returnable)* RightParen
+    :   rvalue Notify LeftParen returnable (Comma returnable)* RightParen
     ;
 
 endon_statement
-    :   variable Endon LeftParen returnable RightParen
+    :   rvalue Endon LeftParen returnable RightParen
     ;
 
 waittill_statement
-    :   variable Waittill LeftParen returnable (Comma returnable)* RightParen
+    :   rvalue Waittill LeftParen returnable (Comma returnable)* RightParen
     ;
 
 code_line_opt_end
@@ -129,31 +129,12 @@ for_loop
 
 value
     : constant
-    | variable
+    | rvalue
     | vector
-    | function_call
     ;
 
 vector
     :   LeftParen returnable Comma returnable Comma returnable RightParen
-    ;
-
-var_base
-    :   function_call_2
-    |   Identifier
-    |   Game
-    |   Level
-    |   Self
-    ;
-
-variable_ext
-    :   variable_ext LeftBracket returnable RightBracket # ArrayAccess
-    |   variable_ext Dot Identifier # DotAccess
-    |   var_base # VarBaseUnused
-    ;
-
-variable
-    : variable_ext
     ;
 
 returnable
@@ -190,19 +171,9 @@ function_pointer
     :   file_path? Colon Colon Identifier
     ;
 
-function_call_2
+function_call
     :   Thread? (function_pointer|ptr=Identifier) LeftParen (returnable (Comma returnable)*)? RightParen # StaticFunctionCall
     |   Thread? LeftBracket LeftBracket expr=returnable RightBracket RightBracket LeftParen (returnable (Comma returnable)*)? RightParen # DynamicFunctionCall
-    ;
-
-function_call
-    :   function_call_on
-    |   function_call_2
-    ;
-
-function_call_on
-    :   function_call_on function_call_2
-    |   variable
     ;
 
 switch_statement
@@ -219,11 +190,31 @@ case_s
     ;
 
 increment_decrement
-    :   variable op=(PlusPlus|MinusMinus)
+    :   lvalue op=(PlusPlus|MinusMinus)
     ;
 
 assignment
-    :   variable op=(Assign|StarAssign|DivAssign|ModAssign|PlusAssign|MinusAssign|LeftShiftAssign|RightShiftAssign|AndAssign|XorAssign|OrAssign) returnable
+    :   lvalue op=(Assign|StarAssign|DivAssign|ModAssign|PlusAssign|MinusAssign|LeftShiftAssign|RightShiftAssign|AndAssign|XorAssign|OrAssign) returnable
+    ;
+
+lvalue
+    :   Identifier
+    |   rvalue Dot Identifier
+    |   lvalue LeftBracket returnable RightBracket
+    |   rvalue? function_call LeftBracket returnable RightBracket
+    |   Game LeftBracket returnable RightBracket
+    ;
+
+rvalue
+    :   function_call
+    |   rvalue function_call
+    |   rvalue LeftBracket returnable RightBracket
+    |   LeftParen rvalue RightParen
+    |   rvalue Dot Identifier
+    |   Game
+    |   Level
+    |   Self
+    |   Identifier
     ;
 
 file_path
