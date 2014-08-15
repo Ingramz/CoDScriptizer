@@ -1,0 +1,38 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+version = '0.3'
+mainClassName = "eu.ardel.codscriptizer.CoDScriptizer"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+    compile 'commons-cli:commons-cli:1.2'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        // http://www.gradle.org/docs/current/userguide/java_plugin.html
+    }
+}
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    manifest { attributes 'Main-Class': 'eu.ardel.codscriptizer.CoDScriptizer' }
+}
+
+idea {
+    module {
+        sourceDirs += file('src')
+
+    }
+}
